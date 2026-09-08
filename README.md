@@ -1,7 +1,6 @@
 # CrimeGraph
 
-AI-Powered Criminal Network Analysis System — SIH 2026, Problem Statement 26189
-(Ministry of Home Affairs / NCRB, Women Safety Division).
+AI-Powered Criminal Network Analysis System 
 
 See `docs/PRD_AI_Criminal_Network_Analysis_System.md` for the full requirements
 and `CLAUDE.md` for build instructions / conventions used by Claude Code.
