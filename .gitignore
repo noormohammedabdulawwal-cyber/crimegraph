@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.env
+neo4j_data/
+pg_data/

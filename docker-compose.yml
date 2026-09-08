@@ -1,0 +1,42 @@
+services:
+  neo4j:
+    image: neo4j:5.23-community
+    hostname: neo4j
+    extra_hosts:
+      - "neo4j:127.0.0.1"
+    ports:
+      - "7475:7474"   # browser UI (host 7475 — standard 7474 is taken on this machine)
+      - "7688:7687"   # bolt (host 7688 — see note below)
+    environment:
+      NEO4J_AUTH: neo4j/crimegraph_dev
+      # ISOLATION: this repo deliberately uses its OWN Neo4j so entity-resolution
+      # tuning and GDS projections never collide with the separate SIH stack that
+      # already owns the standard ports (bolt 7687 / http 7474) on this machine.
+      # Point NEO4J_URI=bolt://localhost:7688 (see neo4j_client.py).
+      NEO4J_PLUGINS: '["graph-data-science"]'
+      # NOTE: a stable `hostname` + `extra_hosts` entry is what stops Neo4j's
+      # boot crash in sandboxed container runtimes (container hostname lookup).
+      # Do NOT add NEO4J_dbms_connector_*_advertised_address env vars — Neo4j
+      # 5.23 rejects that legacy alias under strict config validation.
+    volumes:
+      - neo4j_data:/data
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5433:5432"   # host 5433 — standard 5432 is owned by the SIH stack
+    environment:
+      POSTGRES_USER: crimegraph
+      POSTGRES_PASSWORD: crimegraph_dev
+      POSTGRES_DB: crimegraph
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      # Auto-creates tables on a FRESH volume. Point DATABASE_URL at
+      # postgresql://crimegraph:crimegraph_dev@localhost:5433/crimegraph.
+      # Seed users are inserted by `python backend/app/db/migrate.py` (bcrypt
+      # hashes are generated at runtime, so they can't live in static SQL).
+      - ./backend/app/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+
+volumes:
+  neo4j_data:
+  pg_data:

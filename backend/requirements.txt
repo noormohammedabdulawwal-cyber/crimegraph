@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+neo4j==5.24.0
+psycopg2-binary>=2.9.12
+spacy>=3.8
+python-jose[cryptography]==3.3.0
+# passlib 1.7.4 is broken at runtime with modern bcrypt (>=4.1); hash directly.
+bcrypt>=4.2
+python-multipart==0.0.9
+pandas>=2.2.2
+rapidfuzz>=3.9
